@@ -10,12 +10,14 @@ import React, { useMemo, useState } from "react";
 
 const Campaigns = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<any>();
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 20;
 
   const { data: campaigns, isLoading } = useGetCampaigns({
     limit,
+    page_no: currentPage,
   });
 
   const info = useMemo(() => {
@@ -90,17 +92,14 @@ const Campaigns = () => {
         return (
           <>
             <div
-              onClick={() => setIsOpen(true)}
+              onClick={() => {
+                setData(campaignData);
+                setIsOpen(true);
+              }}
               className="text-[#A1238E] font-medium underline cursor-default hover:text-[#59044c]"
             >
               View Details
             </div>
-
-            <CampaignDetailsModal
-              open={isOpen}
-              onClose={() => setIsOpen(false)}
-              data={campaignData}
-            />
           </>
         );
       },
@@ -114,11 +113,17 @@ const Campaigns = () => {
           <h1 className="font-bold text-base md:text-lg text-gray-700">
             All Campaigns
           </h1>
-          <div></div>
+          <div>
+            <CampaignDetailsModal
+              open={isOpen}
+              onClose={() => setIsOpen(false)}
+              data={data}
+            />
+          </div>
         </div>
         {isLoading ? (
           <TableSkeleton />
-        ) : info?.length < 1 ? (
+        ) : info?.campaigns?.length < 1 ? (
           <EmptyState />
         ) : (
           <Table

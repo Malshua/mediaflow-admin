@@ -125,7 +125,7 @@ const Table = ({
       {/* pagination */}
       <div className="bg-white w-full pt-8 pb-6 px-6 flex items-center justify-between">
         {count && (
-          <div className="text-sm text-muted">
+          <div className="text-sm">
             Showing {data?.length} out of {count} results
           </div>
         )}

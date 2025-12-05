@@ -1,46 +1,63 @@
 "use client";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { EmptyState, Table } from "@/components/elements";
 import { TableSkeleton } from "@/components/skeletons";
+import { GetStatusBadge } from "@/components/widgets";
 import { useGetMediaPlans } from "@/hooks/mediaHooks";
+import { moneyFormat, moneyFormat2 } from "@/utilities/helpers";
 import { createColumnHelper } from "@tanstack/react-table";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
+import { MediaPlanDetailsModal } from "@/components/sections/media-plan";
 
 const ActivityLogs = () => {
-  const { data: mediaPlans, isLoading } = useGetMediaPlans({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState<any>();
+  const limit = 20;
 
-  const info = ["1"];
+  const { data: mediaPlans, isLoading } = useGetMediaPlans({
+    limit,
+    page_no: currentPage,
+  });
+
+  const info = useMemo(() => {
+    return mediaPlans?.data?.data;
+  }, [mediaPlans]);
+
+  console.log(info);
 
   const columnHelper = createColumnHelper();
 
   const columns = [
     columnHelper.accessor((row: any) => "", {
       id: "title",
-      header: () => <span>Title</span>,
+      header: () => <span>Campaign Name</span>,
       cell: (info: any) => {
         const value = info?.row?.original;
 
-        return <div></div>;
+        return <div className="font-medium">{value?.campaignName}</div>;
       },
     }),
 
     columnHelper.accessor((row: any) => "", {
       id: "status",
-      header: () => <span>Status</span>,
+      header: () => <span>Approval Status</span>,
       cell: (info: any) => {
-        const status = info?.getValue();
+        const status = info?.row?.original;
         return (
-          <div
-            className={`${
-              status == "active"
-                ? "bg-green-500"
-                : status == "pending"
-                ? "bg-amber-300"
-                : status == "completed"
-                ? "bg-red-500"
-                : ""
-            } py-1 px-2.5 text-white text-xs rounded w-fit`}
-          ></div>
+          <div className={` py-1 px-2.5 text-white text-xs rounded w-fit`}>
+            {<GetStatusBadge status={status?.adminApprovalStatus} />}
+          </div>
         );
       },
     }),
@@ -49,17 +66,10 @@ const ActivityLogs = () => {
       id: "budget",
       header: () => <span>Budget</span>,
       cell: (info: any) => {
-        const budget = info?.getValue();
-        return <div className="font-medium">₦</div>;
-      },
-    }),
-
-    columnHelper.accessor((row: any) => "", {
-      id: "performance",
-      header: () => <span>Performance</span>,
-      cell: (info: any) => {
-        const value = info?.getValue();
-        return <div>{/* <ProgressBar value={value} /> */}</div>;
+        const budget = info?.row?.original?.budget;
+        return (
+          <div className="font-medium">₦{moneyFormat(Number(budget))}</div>
+        );
       },
     }),
 
@@ -67,13 +77,36 @@ const ActivityLogs = () => {
       id: "actions",
       header: () => <span>Actions</span>,
       cell: (info: any) => {
-        const value = info.row.original;
+        const data = info.row.original;
         return (
-          <div
-            // href={`${Routes?.CAMPAIGNS}/${value?.id}`}
-            className="text-[#A1238E] font-medium underline cursor-default hover:text-[#59044c]"
-          >
-            View Details
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setData(data);
+                    setIsOpen(true);
+                  }}
+                >
+                  View details
+                </DropdownMenuItem>
+                <div>
+                  {" "}
+                  <DropdownMenuItem>Reprompt media plan</DropdownMenuItem>
+                </div>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-red-500">
+                  Reject media plan
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         );
       },
@@ -87,14 +120,27 @@ const ActivityLogs = () => {
           <h1 className="font-bold text-base md:text-lg text-gray-700">
             Media Plans
           </h1>
-          <div></div>
+          <div>
+            <MediaPlanDetailsModal
+              open={isOpen}
+              onClose={() => setIsOpen(false)}
+              data={data}
+            />
+          </div>
         </div>
         {isLoading ? (
           <TableSkeleton />
-        ) : info?.length < 1 ? (
+        ) : info?.mediaPlans?.length < 1 ? (
           <EmptyState />
         ) : (
-          <Table columns={columns} data={[]} />
+          <Table
+            columns={columns}
+            data={info?.mediaPlans}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPage={info?.pagination?.totalPages}
+            count={info?.pagination?.total}
+          />
         )}
       </div>
     </section>

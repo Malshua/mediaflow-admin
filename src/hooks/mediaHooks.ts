@@ -59,14 +59,16 @@ export const useGetMediaPlans = ({
   status?: string;
 }) => {
   const { token } = useAuth();
-  const endpoint = `${process.env.BASE_URL}/api/admin/media-plans?page_no=${
+  const endpoint = `${process.env.BASE_URL}/api/admin/media-plans?page=${
     page_no || 1
-  }&no_of_requests=${limit || 40}${searchText ? `&search=${searchText}` : ""}${
+  }&limit=${limit || 40}${searchText ? `&search=${searchText}` : ""}${
     status ? `&status=${status}` : ""
   }`;
   const query = useQuery({
-    queryKey: ["users", page_no, status],
+    queryKey: ["media-plans", page_no, status],
     queryFn: () => serverRequest(token).get(endpoint),
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
   });
 
   return query;
