@@ -10,31 +10,59 @@ import {
 import { EmptyState, Table } from "@/components/elements";
 import { TableSkeleton } from "@/components/skeletons";
 import { GetStatusBadge } from "@/components/widgets";
-import { useGetMediaPlans } from "@/hooks/mediaHooks";
+import { useApproveMediaPlan, useGetMediaPlans } from "@/hooks/mediaHooks";
 import { moneyFormat, moneyFormat2 } from "@/utilities/helpers";
 import { createColumnHelper } from "@tanstack/react-table";
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { MediaPlanDetailsModal } from "@/components/sections/media-plan";
+import {
+  MediaPlanDetailsModal,
+  RejectMediaPlan,
+  RepromptMediaPlan,
+} from "@/components/sections/media-plan";
+import { useInvalidateMedia } from "@/hooks/invalidateHooks";
+import { toast } from "react-toastify";
 
 const ActivityLogs = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [openReject, setOpenReject] = useState(false);
+  const [openReprompt, setOpenReprompt] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState<any>();
   const limit = 20;
+  const { RefetchMediaPlan } = useInvalidateMedia();
 
   const { data: mediaPlans, isLoading } = useGetMediaPlans({
     limit,
     page_no: currentPage,
   });
 
+  const { mutate: Approve } = useApproveMediaPlan({
+    mediaPlanId: data?.mediaPlanId,
+  });
+
+  const handleApprove = () => {
+    const payload: any = {};
+    setIsApproving(true);
+    Approve(payload, {
+      onSuccess: (response) => {
+        setIsApproving(false);
+        toast?.success(response?.data?.message);
+        RefetchMediaPlan();
+      },
+      onError: (error: any) => {
+        setIsApproving(false);
+        toast.error(error?.response?.data?.message);
+      },
+    });
+  };
+
   const info = useMemo(() => {
     return mediaPlans?.data?.data;
   }, [mediaPlans]);
-
-  console.log(info);
 
   const columnHelper = createColumnHelper();
 
@@ -78,6 +106,7 @@ const ActivityLogs = () => {
       header: () => <span>Actions</span>,
       cell: (info: any) => {
         const data = info.row.original;
+
         return (
           <div>
             <DropdownMenu>
@@ -96,13 +125,35 @@ const ActivityLogs = () => {
                 >
                   View details
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setData(data);
+                    handleApprove();
+                  }}
+                  disabled
+                >
+                  Approve plan
+                </DropdownMenuItem>
                 <div>
                   {" "}
-                  <DropdownMenuItem>Reprompt media plan</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setData(data);
+                      setOpenReprompt(true);
+                    }}
+                  >
+                    Reprompt media plan
+                  </DropdownMenuItem>
                 </div>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-500">
+                <DropdownMenuItem
+                  className="text-red-500"
+                  onClick={() => {
+                    setData(data);
+                    setOpenReject(true);
+                  }}
+                >
                   Reject media plan
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -124,6 +175,16 @@ const ActivityLogs = () => {
             <MediaPlanDetailsModal
               open={isOpen}
               onClose={() => setIsOpen(false)}
+              data={data}
+            />
+            <RejectMediaPlan
+              openModal={openReject}
+              setOpenModal={setOpenReject}
+              data={data}
+            />
+            <RepromptMediaPlan
+              openModal={openReprompt}
+              setOpenModal={setOpenReprompt}
               data={data}
             />
           </div>

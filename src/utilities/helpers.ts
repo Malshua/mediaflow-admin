@@ -137,6 +137,13 @@ export const formatDateAndTime = (date: moment.MomentInput) => {
   return value;
 };
 
+export const getErrorMessage = (error: any): string => {
+  if (typeof error === "string") return error;
+  if (error?.value?.message) return error.value.message;
+  if (error?.message) return error.message;
+  return String(error);
+};
+
 export const DDMMYYTime = (date: moment.MomentInput) => {
   const value = {
     Date: moment(date).format("DD/MM/YY"),
