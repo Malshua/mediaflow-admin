@@ -70,7 +70,7 @@ const Page = () => {
   return (
     <>
       <section className="h-full flex items-center justify-center ">
-        <div className="w-11/12">
+        <div className="w-full">
           <div className="text-center">
             <div className={`flex items-center justify-center `}>
               <Image src={media_logo} alt="logo" height={100} width={100} />

@@ -6,7 +6,7 @@ const AdminRoutes = {
   // app routes
   DASHBOARD: "/dashboard",
   CAMPAIGNS: "/campaigns",
-  ACTIVITY_LOGS: "/activity-logs",
+  ACTIVITY_LOGS: "/media-plans",
   USERS: "/users",
 };
 

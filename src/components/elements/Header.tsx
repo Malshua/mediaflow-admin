@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { media_logo } from "../../../public/images";
@@ -45,7 +45,7 @@ const Header = () => {
 
   return (
     <div className="hidden fixed w-full top-0 md:flex items-center justify-between border-b border-[#E2E8F0] px-8 py-3 bg-gradient-to-tr from-purple-950 via-fuchsia-900 to-purple-800">
-      <div className="flex items-center gap-32">
+      <div className="flex items-center gap-16 lg:gap-32">
         <Image src={media_logo} alt="coceptual logo" width={37} height={32} />
 
         <ul className="flex items-center gap-2">

@@ -26,7 +26,7 @@ function MediaPlanDetailsModal({ open, onClose, data }: any) {
       >
         {/* Modal Header */}
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
             <FaBullseye className="text-primary" />
             Media Plan Details
           </h2>
@@ -43,14 +43,14 @@ function MediaPlanDetailsModal({ open, onClose, data }: any) {
         <div className="p-6 space-y-6">
           {/* Title */}
           <div>
-            <h3 className="text-xl font-semibold">Plan Title</h3>
-            <p className="text-gray-700">{data.title}</p>
+            <h3 className="sm:text-xl font-semibold">Plan Title</h3>
+            <p className="text-sm sm:text-base text-gray-700">{data.title}</p>
           </div>
 
           {/* Executive Summary */}
           <div>
-            <h3 className="text-xl font-semibold">Executive Summary</h3>
-            <p className="text-gray-700 leading-relaxed">
+            <h3 className="sm:text-xl font-semibold">Executive Summary</h3>
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
               {data.executiveSummary}
             </p>
           </div>

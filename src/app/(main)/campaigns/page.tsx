@@ -3,9 +3,18 @@
 import { EmptyState, ProgressBar, Table } from "@/components/elements";
 import { CampaignDetailsModal } from "@/components/sections/campaigns";
 import { TableSkeleton } from "@/components/skeletons";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { GetStatusBadge } from "@/components/widgets";
 import { useGetCampaigns } from "@/hooks/campaignHooks";
 import { moneyFormat } from "@/utilities/helpers";
 import { createColumnHelper } from "@tanstack/react-table";
+import { MoreVertical } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 const Campaigns = () => {
@@ -107,10 +116,10 @@ const Campaigns = () => {
   ];
 
   return (
-    <section className="mx-auto px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-14">
+    <section className="mx-auto sm:px-5 md:px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-14">
       <div className="bg-white p-5 shadow-sm rounded-lg mx-4 mt-10">
         <div className="flex items-center justify-between mb-5 md:px-4">
-          <h1 className="font-bold text-base md:text-lg text-gray-700">
+          <h1 className="font-bold text-lg md:text-xl text-gray-700">
             All Campaigns
           </h1>
           <div>
@@ -126,14 +135,71 @@ const Campaigns = () => {
         ) : info?.campaigns?.length < 1 ? (
           <EmptyState />
         ) : (
-          <Table
-            columns={columns}
-            data={info?.campaigns}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPage={info?.pagination?.totalPages}
-            count={info?.pagination?.total}
-          />
+          <div>
+            <div className="hidden md:block">
+              <Table
+                columns={columns}
+                data={info?.campaigns}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPage={info?.pagination?.totalPages}
+                count={info?.pagination?.total}
+              />
+            </div>
+            <div className="block md:hidden">
+              {info?.campaigns.map((ro: any, i: number) => {
+                return (
+                  <div
+                    key={i}
+                    className="border px-2 py-4 rounded-md flex items-start justify-between"
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-medium text-wrap">
+                          {ro?.campaignName}
+                        </div>
+
+                        <div className="whitespace-nowrap capitalize text-green-800 font-medium">
+                          {ro?.campaignType.replace(/_/g, " ")}
+                        </div>
+
+                        <div className="w-fit py-1 flex items-center gap-2 rounded-2xl capitalize">
+                          ₦{moneyFormat(ro?.budget)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-10">
+                      <>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setData(ro);
+                                setIsOpen(true);
+                              }}
+                              className="text-[#A1238E] font-medium underline cursor-default hover:text-[#59044c]"
+                            >
+                              View details
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </>
+                      <div className="pr-2">
+                        {<GetStatusBadge status={ro?.status} />}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
     </section>

@@ -44,13 +44,11 @@ const Dashboard = () => {
   ];
 
   return (
-    <section className="mx-auto px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-14">
+    <section className="mx-5 md:px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] md:pt-14 mt-7">
       <>
         <div className="flex flex-col gap-8">
           <div className="mt-10">
-            <h1 className="text-lg font-semibold">
-              Welcome back to the Admin Dashbaord
-            </h1>
+            <h1 className="md:text-lg font-semibold">Welcome back, Admin!</h1>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {/* {dashCards.map((item, i) => (

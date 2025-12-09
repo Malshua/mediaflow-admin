@@ -15,7 +15,7 @@ import { moneyFormat, moneyFormat2 } from "@/utilities/helpers";
 import { createColumnHelper } from "@tanstack/react-table";
 import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, MoreVertical } from "lucide-react";
 import {
   MediaPlanDetailsModal,
   RejectMediaPlan,
@@ -165,10 +165,10 @@ const ActivityLogs = () => {
   ];
 
   return (
-    <section className="mx-auto px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-14">
+    <section className="mx-auto sm:px-5 md:px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-7 md:mt-14">
       <div className="bg-white p-5 shadow-sm rounded-lg mx-4 mt-10">
         <div className="flex items-center justify-between mb-5 md:px-4">
-          <h1 className="font-bold text-base md:text-lg text-gray-700">
+          <h1 className="font-bold text-lg md:text-xl text-gray-700">
             Media Plans
           </h1>
           <div>
@@ -194,14 +194,107 @@ const ActivityLogs = () => {
         ) : info?.mediaPlans?.length < 1 ? (
           <EmptyState />
         ) : (
-          <Table
-            columns={columns}
-            data={info?.mediaPlans}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPage={info?.pagination?.totalPages}
-            count={info?.pagination?.total}
-          />
+          <div>
+            <div className="hidden md:block">
+              <Table
+                columns={columns}
+                data={info?.mediaPlans}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPage={info?.pagination?.totalPages}
+                count={info?.pagination?.total}
+              />
+            </div>
+            <div className="block md:hidden">
+              {info?.mediaPlans.map((ro: any, i: number) => {
+                return (
+                  <div
+                    key={i}
+                    className="border px-2 py-4 rounded-md flex items-start justify-between"
+                  >
+                    <div className="">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-semibold text-lg">
+                          {ro?.campaignName}
+                        </div>
+
+                        <div className="whitespace-nowrap capitalize text-green-800 font-medium">
+                          {ro?.campaignType.replace(/_/g, " ")}
+                        </div>
+
+                        <div className="w-fit py-1 flex items-center gap-2 rounded-2xl capitalize">
+                          ₦{moneyFormat(ro?.budget)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-10">
+                      <>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setData(ro);
+                                setIsOpen(true);
+                              }}
+                            >
+                              View details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setData(ro);
+                                handleApprove();
+                              }}
+                              disabled
+                            >
+                              Approve plan
+                            </DropdownMenuItem>
+                            <div>
+                              {" "}
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setData(ro);
+                                  setOpenReprompt(true);
+                                }}
+                              >
+                                Reprompt media plan
+                              </DropdownMenuItem>
+                            </div>
+
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-500"
+                              onClick={() => {
+                                setData(data);
+                                setOpenReject(true);
+                              }}
+                            >
+                              Reject media plan
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </>
+                      <div className="pr-2">
+                        {
+                          <GetStatusBadge
+                            status={
+                              ro?.adminApprovalStatus ? "active" : "inactive"
+                            }
+                          />
+                        }
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
     </section>

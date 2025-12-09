@@ -25,12 +25,12 @@ function UserDetailsModal({ open, onClose, data }: any) {
         className="
           bg-white dark:bg-gray-900 w-[90%] lg:w-[55%] max-h-[90vh] 
           overflow-y-auto rounded-2xl shadow-2xl border border-gray-200
-          dark:border-gray-700 p-6
+          dark:border-gray-700 px-4 py-6 sm:px-6
         "
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <FiUser className="text-indigo-500" />
             User Details
           </h1>
@@ -45,12 +45,12 @@ function UserDetailsModal({ open, onClose, data }: any) {
 
         {/* User Summary */}
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-start gap-4">
-          <div className="w-12 h-12 flex items-center justify-center bg-indigo-100 dark:bg-indigo-800 rounded-full">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center bg-indigo-100 dark:bg-indigo-800 rounded-full">
             <FiUser className="text-indigo-600 dark:text-indigo-300 text-2xl" />
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
               {data.fullName}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
@@ -158,7 +158,7 @@ function UserDetailsModal({ open, onClose, data }: any) {
         </div>
 
         {/* Created Date */}
-        <div className="mt-6 text-sm text-gray-500 flex items-center gap-2">
+        <div className="mt-6 text-xs md:text-sm text-gray-500 flex items-center gap-2">
           <FiCalendar />
           Account Created: {new Date(data.createdAt).toLocaleString()}
         </div>
