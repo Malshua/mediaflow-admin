@@ -27,7 +27,6 @@ import { toast } from "react-toastify";
 const ActivityLogs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const [searchText, setSearchText] = useState("");
   const [openReject, setOpenReject] = useState(false);
   const [openReprompt, setOpenReprompt] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
