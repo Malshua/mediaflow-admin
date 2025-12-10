@@ -47,7 +47,7 @@ function RepromptMediaPlan({ openModal, setOpenModal, data }: any) {
         openModal={() => setOpenModal(false)}
         backgroundColor="bg-white"
       >
-        <div className="flex w-96 flex-col gap-5 p-3">
+        <div className="flex sm:w-96 flex-col gap-5 p-3">
           <h2 className="text-lg font-bold text-red-600">
             Reprompt Media Plan
           </h2>
