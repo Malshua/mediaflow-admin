@@ -1,6 +1,11 @@
 "use client";
 
-import { EmptyState, Table } from "@/components/elements";
+import {
+  EmptyState,
+  SearchWidget,
+  StatusSelect,
+  Table,
+} from "@/components/elements";
 import { TableSkeleton } from "@/components/skeletons";
 import { GetStatusBadge } from "@/components/widgets";
 import { useGetUsers } from "@/hooks/userHooks";
@@ -15,13 +20,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { GoPlusCircle } from "react-icons/go";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { AdminRoutes } from "@/constants/AdminRoutes";
 
 const UsersTable = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState<any>();
+  const pathname = usePathname();
+  const firstRoute = pathname.split("/")[1] || "";
   const limit = 20;
+
+  const { watch, control } = useForm();
+  const watched = watch("status")?.value;
+
+  const Correct = firstRoute === "users";
 
   const { data: users, isLoading } = useGetUsers({
     limit,
@@ -82,27 +99,37 @@ const UsersTable = () => {
       cell: (info: any) => {
         const data = info.row.original;
         return (
-          <div
-            onClick={() => {
-              setData(data);
-              setIsOpen(true);
-            }}
+          <Link
+            href={`${AdminRoutes?.USERS}/${data?.id}`}
             className="text-[#A1238E] font-medium underline cursor-default hover:text-[#59044c]"
           >
             View Details
-          </div>
+          </Link>
         );
       },
     }),
   ];
 
   return (
-    <section className="mx-auto sm:px-5 md:px-10 pb-5 xl:px-20 border-x border-[#E2E8F0] pt-7 md:mt-14">
-      <div className="bg-white p-5 shadow-sm rounded-lg mx-4 mt-10">
-        <div className="flex items-center justify-between mb-5 md:px-4">
+    <section
+      className={`mx-auto ${
+        Correct
+          ? "sm:px-5 md:px-10 xl:px-20 border-x border-[#E2E8F0] pt-7 md:mt-14"
+          : ""
+      } pb-5 `}
+    >
+      <div
+        className={`bg-white ${
+          Correct ? "p-5 mx-4 mt-10 shadow-sm rounded-lg" : ""
+        }  `}
+      >
+        <div className={`flex flex-col ${Correct ? "mb-5 md:px-4" : ""}`}>
           <h1 className="font-bold text-lg md:text-xl text-gray-700">
-            Our Users
+            User Management
           </h1>
+          <p className="text-[10px] sm:text-sm">
+            Manage users, view profiles and perform administrative actions
+          </p>
           <div>
             <UserDetailsModal
               open={isOpen}
@@ -111,6 +138,36 @@ const UsersTable = () => {
             />
           </div>
         </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 mb-3">
+          <div className="flex items-center py-4 w-full md:w-[50%]">
+            <SearchWidget
+              placeholder="Search users by email or name.."
+              searchText={searchValue}
+              setSearchText={setSearchValue}
+            />
+          </div>
+
+          <div className="text-xs font-medium p-1 border-dashed border rounded w-fit flex items-center gap-3">
+            <div className="sm:w-40">
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <StatusSelect
+                    options={[]}
+                    leftIcon={<GoPlusCircle />}
+                    icon={3}
+                    placeholder="Status"
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div></div>
         {isLoading ? (
           <TableSkeleton />
         ) : info?.users?.length < 1 ? (
@@ -140,11 +197,11 @@ const UsersTable = () => {
                           {ro?.fullName}
                         </div>
 
-                        <div className="whitespace-nowrap capitalize font-medium">
+                        <div className="whitespace-nowrap capitalize text-xs sm:text-sm font-medium">
                           {ro?.email}
                         </div>
 
-                        <div className="w-fit py-1 flex items-center gap-2 rounded-2xl font-medium capitalize">
+                        <div className="w-fit py-1 flex items-center gap-2 text-xs sm:text-sm rounded-2xl font-medium capitalize">
                           Industry: {ro?.industry}
                         </div>
                       </div>

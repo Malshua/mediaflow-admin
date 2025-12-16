@@ -19,11 +19,9 @@ const RecentActivity = ({ activities }: any) => {
             key={i}
             className="py-4 px-4 md:px-6 text-sm border-t border-[#EDF2F7] flex justify-between"
           >
-            <div className="text-sm md:text-base flex-1 mr-4">
-              {item?.title}
-            </div>
+            <div className="text-xs sm:text-sm flex-1 mr-4">{item?.title}</div>
 
-            <div className="text-sm md:text-base font-semibold">
+            <div className="text-xs sm:text-sm md:text-base font-semibold">
               {DDMMYYTime(item.createdAt).Date},{" "}
               {DDMMYYTime(item.createdAt).Time}
             </div>

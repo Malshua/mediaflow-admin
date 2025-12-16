@@ -43,7 +43,6 @@ const Page = () => {
       onSuccess: (response) => {
         setIsSubmitting(false);
         const token = response.data.data?.token;
-        const user = response.data.data?.userDetails;
         const details: any = token ? jwtDecode(token) : {};
 
         const login_data = {
@@ -51,7 +50,7 @@ const Page = () => {
           user: {
             id: details?.id,
             email: details?.email,
-            role: user?.role,
+            role: details?.role,
           },
           isAuthenticated: true,
         };

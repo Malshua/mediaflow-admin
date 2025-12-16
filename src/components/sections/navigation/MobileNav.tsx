@@ -41,7 +41,7 @@ const NavLinks = [
   },
   {
     label: "Media Plan",
-    link: AdminRoutes.ACTIVITY_LOGS,
+    link: AdminRoutes.MEDIA_PLANS,
     icon: <IoLogoStackoverflow />,
   },
   {

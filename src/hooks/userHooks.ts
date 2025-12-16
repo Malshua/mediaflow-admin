@@ -31,3 +31,20 @@ export const useGetUsers = ({
 
   return query;
 };
+
+export const useGetSingleUser = ({
+  user_id,
+}: {
+  user_id: string | string[] | undefined;
+}) => {
+  const { token } = useAuth();
+
+  const endpoint = `${process.env.BASE_URL}/api/admin/users/${user_id}`;
+  const query = useQuery({
+    queryKey: ["single-user"],
+    queryFn: () => serverRequest(token).get(endpoint),
+    enabled: !!user_id,
+  });
+
+  return query;
+};
